@@ -1,3 +1,4 @@
+<div id="userData" data-user-id="{{USER.ID}}"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const diagQualitative = {
@@ -964,8 +965,9 @@
   // Function to save survey responses
   async function saveSurveyResponse(results) {
     try {
-      const ican_id = {{USER.ID}}
-
+      const ican_id = document.getElementById('userData').dataset.userId;
+      console.log("ican_id:", ican_id);
+      
       console.log("supabaseClient",supabaseClient )
       // Save detailed responses
       const { data: surveyResponse, error: responseError } = await supabaseClient
@@ -992,15 +994,14 @@
   // Function to fetch user's survey history
   async function fetchSurveyHistory() {
     try {
-      const user = await supabase.auth.getUser()
-      if (!user.data?.user) {
-        throw new Error('No authenticated user found')
-      }
+      const ican_id = document.getElementById('userData').dataset.userId;
+      console.log("ican_id:", ican_id);
+      if (!ican_id) throw error
 
       const { data: surveyHistory, error } = await supabaseClient
         .from('survey_responses')
         .select('*')
-        .eq('ican_id', user.data.user.id)
+        .eq('ican_id', ican_id)
         .order('taken_at', { ascending: false })
 
       if (error) throw error
