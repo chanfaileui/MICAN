@@ -1,4 +1,4 @@
-<div id="userData" data-user-id="{{USER.ID}}"></div>
+<div id="userData" data-user-id="{{ USER.ID }}"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const diagQualitative = {
@@ -944,7 +944,6 @@
 
   //------------------supabase integration ------------------------------------
 
-  // First, initialise Supabase client
   let supabaseClient = null
 
   async function initializeSupabase() {
@@ -962,26 +961,25 @@
     }
   }
 
-  // Function to save survey responses
   async function saveSurveyResponse(results) {
     try {
-      const ican_id = document.getElementById('userData').dataset.userId;
-      console.log("ican_id:", ican_id);
-      
-      console.log("supabaseClient",supabaseClient )
-      // Save detailed responses
-      const { data: surveyResponse, error: responseError } = await supabaseClient
-        .from('survey_responses')
-        .insert({
-          ican_id: ican_id,
-          depression: results.depression,
-          anxiety: results.anxiety,
-          stress: results.stress,
-          life_satisfaction: results.lifesatisfaction,
-          taken_at: new Date().toISOString()
-        })
-        .select()
-        .single()
+      const ican_id = document.getElementById('userData').dataset.userId
+      console.log('ican_id:', ican_id)
+
+      console.log('supabaseClient', supabaseClient)
+      const { data: surveyResponse, error: responseError } =
+        await supabaseClient
+          .from('survey_responses')
+          .insert({
+            ican_id: ican_id,
+            depression: results.depression,
+            anxiety: results.anxiety,
+            stress: results.stress,
+            life_satisfaction: results.lifesatisfaction,
+            taken_at: new Date().toISOString()
+          })
+          .select()
+          .single()
 
       if (responseError) throw responseError
       return surveyResponse
@@ -991,11 +989,10 @@
     }
   }
 
-  // Function to fetch user's survey history
   async function fetchSurveyHistory() {
     try {
-      const ican_id = document.getElementById('userData').dataset.userId;
-      console.log("ican_id:", ican_id);
+      const ican_id = document.getElementById('userData').dataset.userId
+      console.log('ican_id:', ican_id)
       if (!ican_id) throw error
 
       const { data: surveyHistory, error } = await supabaseClient
@@ -1012,12 +1009,41 @@
     }
   }
 
-  // Function to visualise survey history
   async function displaySurveyHistory() {
     try {
       const history = await fetchSurveyHistory()
       if (!history.length) {
+        console.log('No survey history available')
         return
+      }
+
+      // Create canvas element if it doesn't exist
+      let chartCanvas = document.getElementById('historyChart')
+      if (!chartCanvas) {
+        const resultSection = document.getElementById(
+          allSections['diagnosis_result']
+        )
+        chartCanvas = document.createElement('canvas')
+        chartCanvas.id = 'historyChart'
+        chartCanvas.classList.add('w-full', 'max-w-4xl', 'mx-auto', 'mt-8')
+
+        // Create a container for the chart
+        const chartContainer = document.createElement('div')
+        chartContainer.className = 'history-chart-container'
+        chartContainer.style.width = '100%'
+        chartContainer.style.maxWidth = '800px'
+        chartContainer.style.margin = '20px auto'
+        chartContainer.style.padding = '20px'
+
+        // Add a title for the history section
+        const historyTitle = document.createElement('h3')
+        historyTitle.textContent = 'Your Mental Health History'
+        historyTitle.style.textAlign = 'center'
+        historyTitle.style.marginBottom = '20px'
+
+        chartContainer.appendChild(historyTitle)
+        chartContainer.appendChild(chartCanvas)
+        resultSection.appendChild(chartContainer)
       }
 
       // Prepare data for charts
@@ -1026,37 +1052,81 @@
       )
       const datasets = [
         {
-          label: 'Depression Score',
-          data: history.map(record => record.depression_score),
-          borderColor: '#FF6384'
+          label: 'Depression',
+          data: history.map(record => record.depression),
+          borderColor: '#FF6384',
+          fill: false,
+          tension: 0.4
         },
         {
-          label: 'Anxiety Score',
-          data: history.map(record => record.anxiety_score),
-          borderColor: '#36A2EB'
+          label: 'Anxiety',
+          data: history.map(record => record.anxiety),
+          borderColor: '#36A2EB',
+          fill: false,
+          tension: 0.4
         },
         {
-          label: 'Stress Score',
-          data: history.map(record => record.stress_score),
-          borderColor: '#FFCE56'
+          label: 'Stress',
+          data: history.map(record => record.stress),
+          borderColor: '#FFCE56',
+          fill: false,
+          tension: 0.4
         },
         {
-          label: 'Life Satisfaction Score',
-          data: history.map(record => record.life_satisfaction_score),
-          borderColor: '#4BC0C0'
+          label: 'Life Satisfaction',
+          data: history.map(record => record.life_satisfaction),
+          borderColor: '#4BC0C0',
+          fill: false,
+          tension: 0.4
         }
       ]
 
-      // Create chart
-      const ctx = document.getElementById('historyChart').getContext('2d')
-      new Chart(ctx, {
+      // Import Chart.js from CDN if not already loaded
+      if (typeof Chart === 'undefined') {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src =
+            'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js'
+          script.onload = resolve
+          script.onerror = reject
+          document.head.appendChild(script)
+        })
+      }
+
+      // Destroy existing chart if it exists
+      const existingChart = Chart.getChart(chartCanvas)
+      if (existingChart) {
+        existingChart.destroy()
+      }
+
+      // Create new chart
+      new Chart(chartCanvas.getContext('2d'), {
         type: 'line',
         data: { labels, datasets },
         options: {
           responsive: true,
+          plugins: {
+            legend: {
+              position: 'top'
+            },
+            title: {
+              display: true,
+              text: 'Mental Health Progress Over Time'
+            }
+          },
           scales: {
             y: {
-              beginAtZero: true
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Score'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Date'
+              }
             }
           }
         }
@@ -1065,7 +1135,6 @@
       console.error('Error displaying survey history:', error)
     }
   }
-
   //------------------show the result -----------------------------------------
   async function ShowIt() {
     await sleep(1500)
@@ -1249,4 +1318,5 @@
       console.error('Test failed:', error)
     }
   }
+  
 </script>
