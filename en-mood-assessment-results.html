@@ -1,0 +1,262 @@
+<div
+  id="userData"
+  data-user-id="{{ USER.ID }}"
+  data-email="{{ USER.EMAIL }}"
+></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  //------------------supabase integration ------------------------------------
+
+  let supabaseClient = null
+
+  async function initializeSupabase() {
+    try {
+      if (!supabaseClient) {
+        supabaseClient = window.supabase.createClient(
+          'https://vusajefxkeebphylzgtq.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1c2FqZWZ4a2VlYnBoeWx6Z3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgzMDE3ODYsImV4cCI6MjA1Mzg3Nzc4Nn0.a3BmMmaw39BuBcZasFJIJgFDX4BgxDslDEu0Tqa872c'
+        )
+      }
+      return supabaseClient
+    } catch (error) {
+      console.error('Failed to initialize Supabase:', error)
+      throw error
+    }
+  }
+
+  async function saveSurveyResponse(results) {
+    try {
+      if (!supabaseClient) {
+        await initializeSupabase()
+      }
+
+      // Get user info from DOM
+      const userData = document.getElementById('userData')
+      const ican_id = userData ? userData.dataset.userId : null
+      const ican_email = userData ? userData.dataset.email : null
+
+      console.log('ican_id:', ican_id)
+      console.log('ican_email:', ican_email)
+
+      console.log('supabaseClient', supabaseClient)
+      const { data: surveyResponse, error: responseError } =
+        await supabaseClient
+          .from('survey_responses')
+          .insert({
+            ican_id: ican_id,
+            ican_email: ican_email,
+            depression: results.depression,
+            anxiety: results.anxiety,
+            stress: results.stress,
+            life_satisfaction: results.lifesatisfaction,
+            taken_at: new Date().toISOString()
+          })
+          .select()
+          .single()
+
+      if (responseError) throw responseError
+      return surveyResponse
+    } catch (error) {
+      console.error('Error saving survey response:', error)
+      throw error
+    }
+  }
+
+  async function fetchSurveyHistory() {
+    try {
+      if (!supabaseClient) {
+        await initializeSupabase()
+      }
+
+      const userData = document.getElementById('userData')
+      const ican_id = userData ? userData.dataset.userId : null
+
+      if (!ican_id) {
+        console.error('No user ID found')
+        return []
+      }
+
+      const { data: surveyHistory, error } = await supabaseClient
+        .from('survey_responses')
+        .select('*')
+        .eq('ican_id', ican_id)
+        .order('taken_at', { ascending: true })
+
+      if (error) throw error
+      return surveyHistory
+    } catch (error) {
+      console.error('Error fetching survey history:', error)
+      return []
+    }
+  }
+
+  async function displaySurveyHistory(targetElement) {
+    try {
+      const history = await fetchSurveyHistory()
+      if (!history.length) {
+        console.log('No survey history available')
+        return
+      }
+
+      // Create canvas element if it doesn't exist
+      let chartCanvas = document.getElementById('historyChart')
+      if (!chartCanvas) {
+        chartCanvas = document.createElement('canvas')
+        chartCanvas.id = 'historyChart'
+        chartCanvas.classList.add('w-full', 'max-w-4xl', 'mx-auto', 'mt-8')
+
+        // Create a container for the chart
+        const chartContainer = document.createElement('div')
+        chartContainer.className = 'history-chart-container'
+        chartContainer.style.width = '100%'
+        chartContainer.style.maxWidth = '800px'
+        chartContainer.style.margin = '20px auto'
+        chartContainer.style.padding = '20px'
+
+        const historyTitle = document.createElement('h2')
+        historyTitle.textContent = 'Your Mental Health History'
+        historyTitle.classList.add('result_text')
+        historyTitle.classList.add('result_text_head')
+        historyTitle.classList.add('lw-widget-in')
+        historyTitle.classList.add('learnworlds-subheading-small')
+        historyTitle.classList.add('learnworlds-subheading')
+        historyTitle.classList.add('learnworlds-element')
+
+        chartContainer.appendChild(historyTitle)
+        chartContainer.appendChild(chartCanvas)
+
+        // Append to the target element instead of resultSection
+        targetElement.appendChild(chartContainer)
+      }
+
+      // Prepare data for charts
+      const labels = history.map(record =>
+        new Date(record.taken_at).toLocaleDateString()
+      )
+      const datasets = [
+        {
+          label: 'Depression',
+          data: history.map(record => record.depression),
+          borderColor: '#FF6384',
+          fill: false,
+          tension: 0.4
+        },
+        {
+          label: 'Anxiety',
+          data: history.map(record => record.anxiety),
+          borderColor: '#36A2EB',
+          fill: false,
+          tension: 0.4
+        },
+        {
+          label: 'Stress',
+          data: history.map(record => record.stress),
+          borderColor: '#FFCE56',
+          fill: false,
+          tension: 0.4
+        },
+        {
+          label: 'Life Satisfaction',
+          data: history.map(record => record.life_satisfaction),
+          borderColor: '#4BC0C0',
+          fill: false,
+          tension: 0.4
+        }
+      ]
+
+      // Import Chart.js from CDN if not already loaded
+      if (typeof Chart === 'undefined') {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src =
+            'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js'
+          script.onload = resolve
+          script.onerror = reject
+          document.head.appendChild(script)
+        })
+      }
+
+      // Destroy existing chart if it exists
+      const existingChart = Chart.getChart(chartCanvas)
+      if (existingChart) {
+        existingChart.destroy()
+      }
+
+      // Create new chart
+      new Chart(chartCanvas.getContext('2d'), {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top'
+            },
+            title: {
+              display: true,
+              text: 'Mental Health Progress Over Time'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Score'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Date'
+              }
+            }
+          }
+        }
+      })
+    } catch (error) {
+      console.error('Error displaying survey history:', error)
+    }
+  }
+  //------------------show the result -----------------------------------------
+
+  document.addEventListener('DOMContentLoaded', async function () {
+    // Ensure the userData element exists
+    if (!document.getElementById('userData')) {
+      console.log('Creating userData element')
+      const userDataElement = document.createElement('div')
+      userDataElement.id = 'userData'
+      userDataElement.dataset.userId = '{{ USER.ID }}'
+      userDataElement.dataset.email = '{{ USER.EMAIL }}'
+      document.body.appendChild(userDataElement)
+    }
+
+    // Define section identifiers if they don't exist
+    if (typeof allSections === 'undefined') {
+      console.log('Defining allSections object')
+      window.allSections = {
+        diagnosis_result: 'section_1727118482472_486',
+        diagnosis_head: 'section_1727118349304_397'
+      }
+    }
+
+    // Hide the existing content in the section
+    const sectionToModify = document.getElementById('section_1727118349304_397')
+    // Hide all the heading elements and the button
+    if (sectionToModify) {
+      const elementsToHide = sectionToModify.querySelectorAll(
+        'h1, .spacer-big, #myProgress'
+      )
+      elementsToHide.forEach(element => {
+        element.style.display = 'none'
+      })
+
+      try {
+        await initializeSupabase()
+        await displaySurveyHistory(sectionToModify)
+      } catch (error) {
+        console.error('Error during initialization:', error)
+      }
+    }
+  })
+</script>
