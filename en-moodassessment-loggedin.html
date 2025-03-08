@@ -1,4 +1,8 @@
-<div id="userData" data-user-id="{{ USER.ID }}"></div>
+<div
+  id="userData"
+  data-user-id="{{ USER.ID }}"
+  data-email="{{ USER.EMAIL }}"
+></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const diagQualitative = {
@@ -963,8 +967,17 @@
 
   async function saveSurveyResponse(results) {
     try {
-      const ican_id = document.getElementById('userData').dataset.userId
+      if (!supabaseClient) {
+        await initializeSupabase()
+      }
+
+      // Get user info from DOM
+      const userData = document.getElementById('userData')
+      const ican_id = userData ? userData.dataset.userId : null
+      const ican_email = userData ? userData.dataset.email : null
+
       console.log('ican_id:', ican_id)
+      console.log('ican_email:', ican_email)
 
       console.log('supabaseClient', supabaseClient)
       const { data: surveyResponse, error: responseError } =
@@ -972,6 +985,7 @@
           .from('survey_responses')
           .insert({
             ican_id: ican_id,
+            ican_email: ican_email,
             depression: results.depression,
             anxiety: results.anxiety,
             stress: results.stress,
@@ -991,21 +1005,29 @@
 
   async function fetchSurveyHistory() {
     try {
-      const ican_id = document.getElementById('userData').dataset.userId
-      console.log('ican_id:', ican_id)
-      if (!ican_id) throw error
+      if (!supabaseClient) {
+        await initializeSupabase()
+      }
+
+      const userData = document.getElementById('userData')
+      const ican_id = userData ? userData.dataset.userId : null
+
+      if (!ican_id) {
+        console.error('No user ID found')
+        return []
+      }
 
       const { data: surveyHistory, error } = await supabaseClient
         .from('survey_responses')
         .select('*')
         .eq('ican_id', ican_id)
-        .order('taken_at', { ascending: false })
+        .order('taken_at', { ascending: true })
 
       if (error) throw error
       return surveyHistory
     } catch (error) {
       console.error('Error fetching survey history:', error)
-      throw error
+      return []
     }
   }
 
@@ -1035,11 +1057,15 @@
         chartContainer.style.margin = '20px auto'
         chartContainer.style.padding = '20px'
 
-        // Add a title for the history section
-        const historyTitle = document.createElement('h3')
+        // add a title
+        const historyTitle = document.createElement('h2')
         historyTitle.textContent = 'Your Mental Health History'
-        historyTitle.style.textAlign = 'center'
-        historyTitle.style.marginBottom = '20px'
+        historyTitle.classList.add('result_text')
+        // historyTitle.classList.add('result_text_head')
+        historyTitle.classList.add('lw-widget-in')
+        historyTitle.classList.add('learnworlds-subheading-small')
+        historyTitle.classList.add('learnworlds-subheading')
+        historyTitle.classList.add('learnworlds-element')
 
         chartContainer.appendChild(historyTitle)
         chartContainer.appendChild(chartCanvas)
@@ -1184,6 +1210,7 @@
 
     // Save to Supabase
     try {
+      await initializeSupabase()
       await saveSurveyResponse(results)
       // After saving, update the history chart
       await displaySurveyHistory()
@@ -1318,5 +1345,4 @@
       console.error('Test failed:', error)
     }
   }
-  
 </script>
