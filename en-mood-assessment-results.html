@@ -3,20 +3,23 @@
   data-user-id="{{ USER.ID }}"
   data-email="{{ USER.EMAIL }}"
 ></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
+<script type="module">
   //------------------supabase integration ------------------------------------
-
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
   let supabaseClient = null
 
   async function initializeSupabase() {
     try {
       if (!supabaseClient) {
-        supabaseClient = window.supabase.createClient(
-          'https://vusajefxkeebphylzgtq.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1c2FqZWZ4a2VlYnBoeWx6Z3RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgzMDE3ODYsImV4cCI6MjA1Mzg3Nzc4Nn0.a3BmMmaw39BuBcZasFJIJgFDX4BgxDslDEu0Tqa872c'
+        supabaseClient = createClient(
+          'https://zioidarzslgqquzvzhks.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inppb2lkYXJ6c2xncXF1enZ6aGtzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxOTI0NDUsImV4cCI6MjA2MTc2ODQ0NX0.9tAmkTBt65ErOyo7BWjJ7Iq8xE9YYk32f_7b0-X7Q-4'
         )
       }
+      console.log(
+        'Supabase project:',
+        'https://zioidarzslgqquzvzhks.supabase.co'
+      )
       return supabaseClient
     } catch (error) {
       console.error('Failed to initialize Supabase:', error)
