@@ -1057,11 +1057,36 @@
         chartContainer.style.margin = '20px auto'
         chartContainer.style.padding = '20px'
 
-        // add a title
+        // Add a title for the history section
+        // addPara(elObj,'Your Mental Health History', false, false, '')
+
+        // async function addPara(paraObj, text, isHead, isGraph, graphElement) {
+        // let newParagraph = document.createElement('h2')
+        // newParagraph.textContent = text
+        // newParagraph.classList.add('result_text')
+
+        // if (isHead) {
+        //   newParagraph.classList.add('result_text_head')
+        // }
+
+        // newParagraph.classList.add('lw-widget-in')
+        // newParagraph.classList.add('learnworlds-subheading-small')
+        // newParagraph.classList.add('learnworlds-subheading')
+        // newParagraph.classList.add('learnworlds-element')
+        // //paraObj.appendChind(newParagraph);
+
+        // if (isGraph) {
+        //   paraObj.before(graphElement)
+        // } else {
+        //   paraObj.before(newParagraph)
+        // }
+
         const historyTitle = document.createElement('h2')
         historyTitle.textContent = 'Your Mental Health History'
+        // historyTitle.style.textAlign = 'center'
+        // historyTitle.style.marginBottom = '20px'
         historyTitle.classList.add('result_text')
-        // historyTitle.classList.add('result_text_head')
+        historyTitle.classList.add('result_text_head')
         historyTitle.classList.add('lw-widget-in')
         historyTitle.classList.add('learnworlds-subheading-small')
         historyTitle.classList.add('learnworlds-subheading')
