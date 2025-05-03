@@ -1032,7 +1032,7 @@
 
         // add a title
         const historyTitle = document.createElement('h2')
-        historyTitle.textContent = '你的心理健康歷史記錄'
+        historyTitle.textContent = '你的心理健康歷程'
         historyTitle.classList.add('result_text')
         // historyTitle.classList.add('result_text_head')
         historyTitle.classList.add('lw-widget-in')
@@ -1051,7 +1051,7 @@
       )
       const datasets = [
         {
-          label: '低落情緒',
+          label: '抑鬱',
           data: history.map(record => record.depression),
           borderColor: '#FF6384',
           fill: false,
@@ -1072,7 +1072,7 @@
           tension: 0.4
         },
         {
-          label: '生活滿意程度',
+          label: '生活满意指数',
           data: history.map(record => record.life_satisfaction),
           borderColor: '#4BC0C0',
           fill: false,
@@ -1110,7 +1110,7 @@
             },
             title: {
               display: true,
-              text: '心理健康進度隨時間變化'
+              text: '心理健康隨時間的變化'
             }
           },
           scales: {
