@@ -953,7 +953,7 @@
   async function initializeSupabase() {
     try {
       if (!supabaseClient) {
-        supabaseClient = createClient(
+        supabaseClient = window.supabase.createClient(
           'https://zioidarzslgqquzvzhks.supabase.co',
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inppb2lkYXJ6c2xncXF1enZ6aGtzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxOTI0NDUsImV4cCI6MjA2MTc2ODQ0NX0.9tAmkTBt65ErOyo7BWjJ7Iq8xE9YYk32f_7b0-X7Q-4'
         )
