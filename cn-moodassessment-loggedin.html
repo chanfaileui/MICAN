@@ -74,7 +74,7 @@
     course_bad_mood: 'section_1727293159545_381',
     course_anxiety_fear: 'section_1727306212853_384',
     course_self_value: 'section_1727306233691_407',
-    course_stress: 'section_1728396226419_372'
+    course_stress: 'section_1728671057524_695'
   }
 
   const otherSections = {
@@ -319,8 +319,8 @@
     var goodbrief =
       'We are happy your result are very good. Continue your wellbeing and keep a good shape!'
     const T_1 = 'Thanks for taking time to measure your mental health status.'
-    const T_2 = 'Are you happy？'
-    const T_2_1 = 'Your psychological evaluation shows: '
+    const T_2 = '你開心嗎？'
+    const T_2_1 = '你的心理評估顯示，'
     const T_3 = ` - Depression level: ${depression}`
     const T_4 = ` - Anxiety level: ${anxiety}`
     const T_5 = ` - Stress level: ${stress}`
@@ -360,141 +360,131 @@
     addPara(elObj, T_2, true, false, '')
 
     switch (true) {
-      case depression == 'Very Severe' ||
-        anxiety == 'Very Severe' ||
-        stress == 'Very Severe':
-        dass = 'Very Severe'
+      case depression == '非常嚴重' ||
+        anxiety == '非常嚴重' ||
+        stress == '非常嚴重':
+        dass = '非常嚴重'
         break
-      case depression == 'Severe' || anxiety == 'Severe' || stress == 'Severe':
-        dass = 'Severe'
+      case depression == '嚴重' || anxiety == '嚴重' || stress == '嚴重':
+        dass = '嚴重'
         break
-      case depression == 'Moderate' ||
-        anxiety == 'Moderate' ||
-        stress == 'Moderate':
-        dass = 'Moderate'
+      case depression == '中度' || anxiety == '中度' || stress == '中度':
+        dass = '中度'
         break
-      case depression == 'Mild' || anxiety == 'Mild' || stress == 'Mild':
-        dass = 'Mild'
+      case depression == '輕度' || anxiety == '輕度' || stress == '輕度':
+        dass = '輕度'
         break
-      case depression == 'Normal' || anxiety == 'Normal' || stress == 'Normal':
-        dass = 'Normal'
+      case depression == '正常' || anxiety == '正常' || stress == '正常':
+        dass = '正常'
         break
     }
     switch (true) {
-      case dass == 'Very Severe' ||
-        dass == 'Severe' ||
-        (dass == 'Moderate' &&
-          (lifesatisfaction == 'Very Dissatisfied' ||
-            lifesatisfaction == 'Dissatisfied')):
+      case dass == '非常嚴重' ||
+        dass == '嚴重' ||
+        (dass == '中度' &&
+          (lifesatisfaction == '非常不滿意' || lifesatisfaction == '不滿意')):
         result_msg =
-          'You are a very unhappy person. Your mental health falls under the category of “psychological distress”.'
-        bar_value = 'Extremely Unhappy'
+          '你是一個非常不開心的人。你的精神心理健康屬於“心理困擾”狀態。'
+        bar_value = '非常不開心'
         break
-      case dass == 'Moderate' ||
-        (dass == 'Mild' &&
-          (lifesatisfaction == 'Very Dissatisfied' ||
-            lifesatisfaction == 'Dissatisfied')):
+      case dass == '中度' ||
+        (dass == '輕度' &&
+          (lifesatisfaction == '非常不滿意' || lifesatisfaction == '不滿意')):
         result_msg =
-          'You are a very unhappy person. Your mental health is in a “low-to-medium subhealth state”.'
-        bar_value = 'Very Unhappy'
+          '你是一個很不開心的人。你的精神心理健康屬於“亞健康狀態中下”。'
+        bar_value = '很不開心'
         break
-      case dass == 'Mild' ||
-        (dass == 'Normal' &&
-          (lifesatisfaction == 'Very Dissatisfied' ||
-            lifesatisfaction == 'Dissatisfied')):
+      case dass == '輕度' ||
+        (dass == '正常' &&
+          (lifesatisfaction == '非常不滿意' || lifesatisfaction == '不滿意')):
         result_msg =
-          'You are a moderately unhappy person. Your mental health is in a “moderate subhealth state”.'
-        bar_value = 'Moderately Unhappy'
+          '你是一個中度不開心的人。你的精神心理健康屬於“亞健康狀態中等”。'
+        bar_value = '中度不開心'
         break
-      case dass == 'Normal' && lifesatisfaction == 'Neutral':
+      case dass == '正常' && lifesatisfaction == '中性':
         result_msg =
-          'You are a slightly unhappy person. Your mental health is in a “middle to upper subhealth state”.'
-        bar_value = 'Slightly Unhappy'
+          '你是一個輕微不開心的人。你的精神心理健康屬於“亞健康狀態中上”。'
+        bar_value = '輕微不開心'
         break
-      case dass == 'Normal' &&
-        (lifesatisfaction == 'Satisfied' ||
-          lifesatisfaction == 'Very Satisfied'):
+      case dass == '正常' &&
+        (lifesatisfaction == '滿意' || lifesatisfaction == '非常滿意'):
         result_msg =
-          'You are a happy person and you are satisfied with your current life. Your mental health is a “healthy state”.'
-        bar_value = 'Happy'
+          '你是一個開心的人，你滿意現在的生活。你的精神心理健康屬於“健康狀態”。'
+        bar_value = '開心'
         break
     }
 
     addPara(elObj, T_2_1 + result_msg, false, false, '')
 
     switch (true) {
-      case lifesatisfaction == 'Very Dissatisfied':
-        result_msg_lifesatisfaction =
-          'You feel very dissatisfied with life in general. '
+      case lifesatisfaction == '非常不滿意':
+        result_msg_lifesatisfaction = '你對整體生活感到非常不滿。'
         break
-      case lifesatisfaction == 'Dissatisfied':
-        result_msg_lifesatisfaction =
-          'You feel dissatisfied with life in general. '
+      case lifesatisfaction == '不滿意':
+        result_msg_lifesatisfaction = '你對整體生活感到不滿。'
         break
-      case lifesatisfaction == 'Neutral':
-        result_msg_lifesatisfaction =
-          'Your overall life satisfaction is neutral. '
+      case lifesatisfaction == '中性':
+        result_msg_lifesatisfaction = '你對整體生活的滿意程度為中性。'
         break
-      case lifesatisfaction == 'Satisfied':
-        result_msg_lifesatisfaction = 'You are satisfied with life overall. '
+      case lifesatisfaction == '滿意':
+        result_msg_lifesatisfaction = '你對整體生活感到滿意。'
         break
-      case lifesatisfaction == 'Very Satisfied':
-        result_msg_lifesatisfaction =
-          'You are very satisfied with life overall. '
+      case lifesatisfaction == '非常滿意':
+        result_msg_lifesatisfaction = '你對整體生活感到非常滿意。'
         break
     }
 
     switch (true) {
-      case depression == 'Very Severe':
-        result_msg_depression = 'You have very severe depression, '
+      case depression == '非常嚴重':
+        result_msg_depression = '你有很嚴重的低落情緒，'
         break
-      case depression == 'Severe':
-        result_msg_depression = 'You have severe depression, '
+      case depression == '嚴重':
+        result_msg_depression = '你有嚴重的低落情緒，'
         break
-      case depression == 'Moderate':
-        result_msg_depression = 'You have moderate depression, '
+      case depression == '中度':
+        result_msg_depression = '你有中度的低落情緒，'
         break
-      case depression == 'Mild':
-        result_msg_depression = 'You have mild depression, '
+      case depression == '輕度':
+        result_msg_depression = '你有輕度的低落情緒，'
         break
-      case depression == 'Normal':
-        result_msg_depression = 'You are not depressed, '
-        break
-    }
-
-    switch (true) {
-      case anxiety == 'Very Severe':
-        result_msg_anxiety = 'have very severe anxiety, '
-        break
-      case anxiety == 'Severe':
-        result_msg_anxiety = 'have severe anxiety, '
-        break
-      case anxiety == 'Moderate':
-        result_msg_anxiety = 'have moderate anxiety, '
-        break
-      case anxiety == 'Mild':
-        result_msg_anxiety = 'have mild anxiety, '
-        break
-      case anxiety == 'Normal':
-        result_msg_anxiety = 'have no anxiety, '
+      case depression == '正常':
+        result_msg_depression = '你沒有低落情緒，'
         break
     }
 
     switch (true) {
-      case stress == 'Very Severe':
-        result_msg_stress = 'and experience very severe stress.'
+      case anxiety == '非常嚴重':
+        result_msg_anxiety = '有很嚴重的焦慮情緒，'
         break
-      case stress == 'Severe':
-        result_msg_stress = 'and experience severe stress.'
+      case anxiety == '嚴重':
+        result_msg_anxiety = '有嚴重的焦慮情緒，'
         break
-      case stress == 'Moderate':
-        result_msg_stress = 'and experience moderate stress.'
+      case anxiety == '中度':
+        result_msg_anxiety = '有中度的焦慮情緒，'
         break
-      case stress == 'Mild':
-        result_msg_stress = 'and experience mild stress.'
+      case anxiety == '輕度':
+        result_msg_anxiety = '有輕度的焦慮情緒，'
         break
-      case stress == 'Normal':
-        result_msg_stress = 'and have no issues with stress.'
+      case anxiety == '正常':
+        result_msg_anxiety = '沒有焦慮情緒，'
+        break
+    }
+
+    switch (true) {
+      case stress == '非常嚴重':
+        result_msg_stress = '並有很嚴重的受壓情況。'
+        break
+      case stress == '嚴重':
+        result_msg_stress = '並有嚴重的受壓情況。'
+        break
+      case stress == '中度':
+        result_msg_stress = '並有中度的受壓情況。'
+        break
+      case stress == '輕度':
+        result_msg_stress = '並有輕度的受壓情況。'
+        break
+      case stress == '正常':
+        result_msg_stress = '並沒有壓力問題。'
         break
     }
 
@@ -504,13 +494,7 @@
       false,
       true,
       create_score_bar(
-        [
-          'Happy',
-          'Slightly Unhappy',
-          'Moderately Unhappy',
-          'Very Unhappy',
-          'Extremely Unhappy'
-        ],
+        ['開心', '輕微不開心', '中度不開心', '很不開心', '非常不開心'],
         bar_value,
         'happy',
         'sad'
@@ -534,17 +518,12 @@
     // First cell
     let table_cell = document.createElement('td')
     let label = document.createElement('label')
-    label.textContent = 'Life Satisfaction'
+    label.textContent = '生活滿意程度'
+    console.log(label)
     table_cell.appendChild(label)
     table_cell.appendChild(
       create_score_bar(
-        [
-          'Very Satisfied',
-          'Satisfied',
-          'Neutral',
-          'Dissatisfied',
-          'Very Dissatisfied'
-        ],
+        ['非常滿意', '滿意', '中性', '不滿意', '非常不滿意'],
         lifesatisfaction,
         'happy',
         'lifesatisfaction'
@@ -555,11 +534,11 @@
     // Second cell
     table_cell = document.createElement('td')
     label = document.createElement('label')
-    label.textContent = 'Anxiety'
+    label.textContent = '焦慮'
     table_cell.appendChild(label)
     table_cell.appendChild(
       create_score_bar(
-        ['Normal', 'Mild', 'Moderate', 'Severe', 'Very Severe'],
+        ['正常', '輕度', '中度', '嚴重', '非常嚴重'],
         anxiety,
         'happy',
         'anxiety'
@@ -576,11 +555,11 @@
 
     table_cell = document.createElement('td')
     label = document.createElement('label')
-    label.textContent = 'Depression'
+    label.textContent = '低落情緒'
     table_cell.appendChild(label)
     table_cell.appendChild(
       create_score_bar(
-        ['Normal', 'Mild', 'Moderate', 'Severe', 'Very Severe'],
+        ['正常', '輕度', '中度', '嚴重', '非常嚴重'],
         depression,
         'happy',
         'depression'
@@ -593,11 +572,11 @@
     // Second cell
     table_cell = document.createElement('td')
     label = document.createElement('label')
-    label.textContent = 'Stress'
+    label.textContent = '壓力'
     table_cell.appendChild(label)
     table_cell.appendChild(
       create_score_bar(
-        ['Normal', 'Mild', 'Moderate', 'Severe', 'Very Severe'],
+        ['正常', '輕度', '中度', '嚴重', '非常嚴重'],
         stress,
         'happy',
         'stress'
@@ -800,14 +779,8 @@
 
   // ------------------------calculation -------------------------------------------------
   function diagnosis(lookType, lookScore) {
-    const diagLevel = ['Normal', 'Mild', 'Moderate', 'Severe', 'Very Severe']
-    const diagLevel2 = [
-      'Very Dissatisfied',
-      'Dissatisfied',
-      'Neutral',
-      'Satisfied',
-      'Very Satisfied'
-    ]
+    const diagLevel = ['正常', '輕度', '中度', '嚴重', '非常嚴重']
+    const diagLevel2 = ['非常不滿意', '不滿意', '中性', '滿意', '非常滿意']
     var diagDepressionResult
     var diagAnxietyResult
     var diagStressResult
@@ -1059,7 +1032,7 @@
 
         // add a title
         const historyTitle = document.createElement('h2')
-        historyTitle.textContent = 'Your Mental Health History'
+        historyTitle.textContent = '你的心理健康歷史記錄'
         historyTitle.classList.add('result_text')
         // historyTitle.classList.add('result_text_head')
         historyTitle.classList.add('lw-widget-in')
@@ -1078,28 +1051,28 @@
       )
       const datasets = [
         {
-          label: 'Depression',
+          label: '低落情緒',
           data: history.map(record => record.depression),
           borderColor: '#FF6384',
           fill: false,
           tension: 0.4
         },
         {
-          label: 'Anxiety',
+          label: '焦慮',
           data: history.map(record => record.anxiety),
           borderColor: '#36A2EB',
           fill: false,
           tension: 0.4
         },
         {
-          label: 'Stress',
+          label: '壓力',
           data: history.map(record => record.stress),
           borderColor: '#FFCE56',
           fill: false,
           tension: 0.4
         },
         {
-          label: 'Life Satisfaction',
+          label: '生活滿意程度',
           data: history.map(record => record.life_satisfaction),
           borderColor: '#4BC0C0',
           fill: false,
@@ -1137,7 +1110,7 @@
             },
             title: {
               display: true,
-              text: 'Mental Health Progress Over Time'
+              text: '心理健康進度隨時間變化'
             }
           },
           scales: {
@@ -1145,13 +1118,13 @@
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Score'
+                text: '分數'
               }
             },
             x: {
               title: {
                 display: true,
-                text: 'Date'
+                text: '日期'
               }
             }
           }
